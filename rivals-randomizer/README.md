@@ -26,6 +26,8 @@ Below the button there's a **WEAPON POOL** — every weapon in the game grouped 
 
 So if you only want to play with Standard weapons, uncheck all the Prime and Contraband ones. If a category has nothing checked, that slot will say "(none selected)" when you randomize.
 
+Your choices are remembered — when you come back to the site (or refresh the page), the weapons you turned off stay off until you turn them back on.
+
 The little tags next to each weapon name show the type:
 
 - **standard** (grey) — basic weapons everyone has

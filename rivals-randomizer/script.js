@@ -72,6 +72,26 @@ const meleeWeapons = [
   { name: "Glast Shard", type: "contraband" },
 ];
 
+// ====== BACKGROUND IMAGES ======
+// Promotional images grabbed from the Rivals page on Roblox. They rotate
+// behind the app as a slow crossfade. If Roblox rotates these images
+// later (the "180DAY" tag suggests they cycle), re-fetch from:
+//   https://thumbnails.roblox.com/v1/games/multiget/thumbnails?universeIds=6035872082&size=768x432&format=Png&countPerUniverse=10
+
+const BG_IMAGES = [
+  "https://tr.rbxcdn.com/180DAY-fdd619dd0b2e62127829101693e2143f/768/432/Image/Png/noFilter",
+  "https://tr.rbxcdn.com/180DAY-60c154f21752ff4cb520340183edb77a/768/432/Image/Png/noFilter",
+  "https://tr.rbxcdn.com/180DAY-eb783deba3b661ff753ab9be4089188d/768/432/Image/Png/noFilter",
+  "https://tr.rbxcdn.com/180DAY-c66296c3f8c6e16eb6f6eecca67c4710/768/432/Image/Png/noFilter",
+  "https://tr.rbxcdn.com/180DAY-36fd690cbf4077d15d6689d8eb3d5875/768/432/Image/Png/noFilter",
+  "https://tr.rbxcdn.com/180DAY-2777ed350b4aea4fcee51549dd1a74c6/768/432/Image/Png/noFilter",
+  "https://tr.rbxcdn.com/180DAY-31c14f4e45ec9b02bd33e93f9df67784/768/432/Image/Png/noFilter",
+  "https://tr.rbxcdn.com/180DAY-f4fe8dcf33ff55a2ecc19e59cabea006/768/432/Image/Png/noFilter",
+  "https://tr.rbxcdn.com/180DAY-ff768dfcbbbd196509ee4106bf7ee600/768/432/Image/Png/noFilter",
+];
+
+const BG_ROTATE_MS = 9000;  // change image every 9 seconds (CSS handles the 1.8s fade)
+
 // ====== HOW IT WORKS ======
 
 // Keeps track of which mode we're in: "1p" or "2p".
@@ -191,9 +211,42 @@ function setMode(mode) {
   });
 }
 
+// ====== SAVING SELECTIONS ======
+// Browsers have a built-in storage area called localStorage that keeps
+// data between visits. We use it to remember which weapons Emil has
+// turned off, so they stay off when he comes back to the page.
+
+const STORAGE_KEY = "rivals-randomizer:disabled-weapons";
+
+// Read the list of weapons that should be unchecked when the page loads.
+function loadDisabledWeapons() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    // localStorage might be unavailable (private mode, etc.) — fall back to nothing disabled.
+    return [];
+  }
+}
+
+// Save the list of currently-unchecked weapons to localStorage.
+function saveDisabledWeapons() {
+  const unchecked = Array.from(
+    document.querySelectorAll(".weapon-checkbox:not(:checked)")
+  ).map(function (cb) { return cb.value; });
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(unchecked));
+  } catch (e) {
+    // Out of storage / blocked — silently ignore. The page still works.
+  }
+}
+
 // Build the checkbox list for the weapon pool, one row per weapon.
-// Runs once when the page loads.
+// Runs once when the page loads. Applies any saved selections from a
+// previous visit so unchecked weapons stay unchecked.
 function buildWeaponPool() {
+  const disabled = loadDisabledWeapons();
+
   for (const cat of categories) {
     const container = document.querySelector(
       `.pool-column[data-category="${cat.id}"] .pool-list`
@@ -209,7 +262,7 @@ function buildWeaponPool() {
       checkbox.className = "weapon-checkbox";
       checkbox.dataset.category = cat.id;
       checkbox.value = weapon.name;
-      checkbox.checked = true;
+      checkbox.checked = !disabled.includes(weapon.name);
 
       const name = document.createElement("span");
       name.className = "weapon-name";
@@ -237,3 +290,46 @@ document.querySelectorAll(".mode-btn").forEach(function (btn) {
 
 // Build the weapon pool checkboxes when the page first loads.
 buildWeaponPool();
+
+// Save selections to localStorage whenever a checkbox in the pool changes.
+// One listener on the parent catches changes from any weapon's checkbox.
+document.querySelector(".weapon-pool").addEventListener("change", saveDisabledWeapons);
+
+// ====== ROTATING BACKGROUND ======
+// Two layers (#bg-a and #bg-b) crossfade by toggling an "active" class.
+// The CSS handles the 1.8s opacity transition; JS just swaps which layer
+// is active and what image it's showing.
+
+function startBackgroundRotation() {
+  if (BG_IMAGES.length === 0) return;
+
+  // Preload every image so crossfades don't reveal a half-loaded blank.
+  for (const url of BG_IMAGES) {
+    const preload = new Image();
+    preload.src = url;
+  }
+
+  const layerA = document.getElementById("bg-a");
+  const layerB = document.getElementById("bg-b");
+  let activeLayer = layerA;
+  let inactiveLayer = layerB;
+  let bgIndex = Math.floor(Math.random() * BG_IMAGES.length);
+
+  // Show the first image immediately on whichever layer starts active.
+  activeLayer.style.backgroundImage = `url("${BG_IMAGES[bgIndex]}")`;
+  activeLayer.classList.add("active");
+
+  setInterval(function () {
+    bgIndex = (bgIndex + 1) % BG_IMAGES.length;
+    inactiveLayer.style.backgroundImage = `url("${BG_IMAGES[bgIndex]}")`;
+    inactiveLayer.classList.add("active");
+    activeLayer.classList.remove("active");
+
+    // Swap roles for next tick.
+    const temp = activeLayer;
+    activeLayer = inactiveLayer;
+    inactiveLayer = temp;
+  }, BG_ROTATE_MS);
+}
+
+startBackgroundRotation();
