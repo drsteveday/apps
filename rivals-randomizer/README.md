@@ -1,4 +1,4 @@
-# Rivals Randomizer
+# Rivals Loadout Randomizer
 
 A weapon picker for the game Rivals. Click a button and it picks a random Primary, Secondary, Utility, and Melee for you.
 
