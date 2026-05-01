@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rivals Randomizer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-mode="1p">
+  <main class="app">
+    <h1>RIVALS RANDOMIZER</h1>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" data-mode="1p">1 PLAYER</button>
+      <button class="mode-btn" data-mode="2p">2 PLAYERS</button>
+    </div>
+
+    <p class="subtitle">Click the button to get a random loadout.</p>
+
+    <div class="players">
+      <div class="player" data-player="1">
+        <h2 class="player-label">Player 1</h2>
+        <div class="loadout">
+          <div class="slot">
+            <div class="slot-label">Primary</div>
+            <div class="slot-pick" id="pick-p1-primary">—</div>
+          </div>
+          <div class="slot">
+            <div class="slot-label">Secondary</div>
+            <div class="slot-pick" id="pick-p1-secondary">—</div>
+          </div>
+          <div class="slot">
+            <div class="slot-label">Utility</div>
+            <div class="slot-pick" id="pick-p1-utility">—</div>
+          </div>
+          <div class="slot">
+            <div class="slot-label">Melee</div>
+            <div class="slot-pick" id="pick-p1-melee">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="player" data-player="2">
+        <h2 class="player-label">Player 2</h2>
+        <div class="loadout">
+          <div class="slot">
+            <div class="slot-label">Primary</div>
+            <div class="slot-pick" id="pick-p2-primary">—</div>
+          </div>
+          <div class="slot">
+            <div class="slot-label">Secondary</div>
+            <div class="slot-pick" id="pick-p2-secondary">—</div>
+          </div>
+          <div class="slot">
+            <div class="slot-label">Utility</div>
+            <div class="slot-pick" id="pick-p2-utility">—</div>
+          </div>
+          <div class="slot">
+            <div class="slot-label">Melee</div>
+            <div class="slot-pick" id="pick-p2-melee">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button id="randomize" class="randomize-btn">RANDOMIZE</button>
+
+    <section class="weapon-pool">
+      <h2 class="pool-title">WEAPON POOL</h2>
+      <p class="pool-subtitle">Uncheck a weapon to remove it from the randomizer.</p>
+
+      <div class="pool-grid">
+        <div class="pool-column" data-category="primary">
+          <h3 class="pool-cat-title">Primary</h3>
+          <div class="pool-list"></div>
+        </div>
+        <div class="pool-column" data-category="secondary">
+          <h3 class="pool-cat-title">Secondary</h3>
+          <div class="pool-list"></div>
+        </div>
+        <div class="pool-column" data-category="utility">
+          <h3 class="pool-cat-title">Utility</h3>
+          <div class="pool-list"></div>
+        </div>
+        <div class="pool-column" data-category="melee">
+          <h3 class="pool-cat-title">Melee</h3>
+          <div class="pool-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+/* ====== COLOURS AND SIZES ======
+   These variables control the look. Change a value here and the rest
+   of the page updates automatically. */
+:root {
+  --bg: #0c0c14;
+  --panel: rgba(20, 20, 30, 0.85);
+  --panel-border: rgba(255, 255, 255, 0.06);
+  --accent: #ffd23a;        /* the gold colour Rivals uses on the picked item */
+  --text: #e9eaee;
+  --muted: #8a8d99;
+
+  /* Type tag colours */
+  --type-standard: #6c7484;
+  --type-prime: #4ea3ff;
+  --type-contraband: #ff6b6b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background:
+    radial-gradient(circle at 20% 0%, #1a1530 0%, transparent 50%),
+    radial-gradient(circle at 80% 100%, #0f1830 0%, transparent 50%),
+    var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.app {
+  width: 100%;
+  max-width: 720px;
+  padding: 32px;
+  text-align: center;
+  transition: max-width 0.25s ease;
+}
+
+/* Give the page more room when there are two players or the pool is shown. */
+body[data-mode="2p"] .app,
+.app:has(.weapon-pool) {
+  max-width: 1120px;
+}
+
+h1 {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  margin: 0 0 20px;
+  text-shadow: 0 2px 12px rgba(255, 210, 58, 0.15);
+}
+
+/* ====== MODE TOGGLE ====== */
+.mode-toggle {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 18px;
+  gap: 4px;
+}
+
+.mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 9px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mode-btn:hover { color: var(--text); }
+
+.mode-btn.active {
+  background: var(--accent);
+  color: #1a1500;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin: 0 0 28px;
+  font-size: 15px;
+}
+
+/* ====== PLAYERS ====== */
+.players {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 880px) {
+  body[data-mode="2p"] .players {
+    grid-template-columns: 1fr 1fr;
+    max-width: none;
+  }
+}
+
+body[data-mode="1p"] .player[data-player="2"] { display: none; }
+body[data-mode="1p"] .player-label { display: none; }
+
+.player-label {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: var(--accent);
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+
+.loadout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.slot {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 22px 20px;
+  text-align: center;
+  backdrop-filter: blur(6px);
+}
+
+.slot-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.slot-pick {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--accent);
+  text-shadow: 0 0 16px rgba(255, 210, 58, 0.25);
+  min-height: 32px;
+  transition: color 0.1s ease;
+}
+
+/* While a slot is rolling, fade the text slightly and add a subtle blur
+   to mimic a slot-machine wheel spinning. */
+.slot-pick.rolling {
+  opacity: 0.75;
+  filter: blur(0.4px);
+}
+
+/* When the slot lands on its final pick, give it a quick bounce and glow. */
+.slot-pick.landed {
+  animation: land 0.4s ease-out;
+}
+
+@keyframes land {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.12); text-shadow: 0 0 28px rgba(255, 210, 58, 0.7); }
+  100% { transform: scale(1); }
+}
+
+/* ====== RANDOMIZE BUTTON ====== */
+.randomize-btn {
+  background: var(--accent);
+  color: #1a1500;
+  border: none;
+  padding: 18px 56px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(255, 210, 58, 0.25);
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.randomize-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(255, 210, 58, 0.35);
+}
+
+.randomize-btn:active { transform: translateY(0); }
+
+/* While the rolling animation is running the button is disabled so it
+   can't be clicked again mid-roll. Make that visible. */
+.randomize-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 16px rgba(255, 210, 58, 0.15);
+}
+
+.randomize-btn:disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 16px rgba(255, 210, 58, 0.15);
+}
+
+/* ====== WEAPON POOL (checkbox list) ====== */
+.weapon-pool {
+  margin-top: 56px;
+  text-align: left;
+}
+
+.pool-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-align: center;
+  margin: 0 0 6px;
+}
+
+.pool-subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+  margin: 0 0 24px;
+}
+
+.pool-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 600px) {
+  .pool-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 980px) {
+  .pool-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}
+
+.pool-column {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 16px 14px;
+  backdrop-filter: blur(6px);
+}
+
+.pool-cat-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 12px;
+  text-align: center;
+}
+
+.pool-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weapon-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.weapon-row:hover { background: rgba(255, 255, 255, 0.04); }
+
+.weapon-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.weapon-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* When a weapon is unchecked, fade its name so it's clear it's excluded. */
+.weapon-row:has(.weapon-checkbox:not(:checked)) .weapon-name {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.weapon-type {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.type-standard {
+  background: rgba(108, 116, 132, 0.2);
+  color: var(--type-standard);
+  border: 1px solid rgba(108, 116, 132, 0.3);
+}
+
+.type-prime {
+  background: rgba(78, 163, 255, 0.15);
+  color: var(--type-prime);
+  border: 1px solid rgba(78, 163, 255, 0.3);
+}
+
+.type-contraband {
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--type-contraband);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+@media (max-width: 480px) {
+  .loadout { grid-template-columns: 1fr; }
+  h1 { font-size: 28px; letter-spacing: 2px; }
+  .randomize-btn { padding: 16px 40px; }
+}
