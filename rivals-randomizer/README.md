@@ -2,9 +2,13 @@
 
 A weapon picker for the game Rivals. Click a button and it picks a random Primary, Secondary, Utility, and Melee for you.
 
+**Live:** [https://drsteveday.github.io/apps/rivals-randomizer/](https://drsteveday.github.io/apps/rivals-randomizer/)
+
 ## How to open it
 
-Double-click **`index.html`**. It will open in your web browser. That's it — no install, no internet needed.
+Either:
+- Visit the live link above from any device, or
+- Double-click **`index.html`** to open it from your computer (no internet needed).
 
 ## How to use it
 
